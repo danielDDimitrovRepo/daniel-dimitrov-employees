@@ -52,11 +52,13 @@ class JobMatcherControllerTest {
                 .andReturn();
 
         JobMatcherResult result = objectMapper.readValue(mvcResult.getResponse().getContentAsByteArray(), JobMatcherResult.class);
-        assertThat(result.getFirstEmployee()).isEqualTo(218);
-        assertThat(result.getSecondEmployee()).isEqualTo(143);
-        assertThat(result.getProjectId()).isEqualTo(10);
-        assertThat(result.getDaysWorkedTogether()).isEqualTo(8);
+        JobMatcherResult expected = JobMatcherResult.builder()
+                .firstEmployee(218)
+                .secondEmployee(143)
+                .projectId(10)
+                .daysWorkedTogether(8).build();
 
+        assertThat(result).isEqualTo(expected);
     }
 
     @Test
@@ -87,7 +89,6 @@ class JobMatcherControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(result -> assertThat(result.getResolvedException()).isInstanceOf(IllegalArgumentException.class))
                 .andExpect(result -> assertThat(ERR_MSG_VALID_DATE_RANGE).isNotNull().isEqualTo(result.getResolvedException().getMessage()));
-
     }
 
 }

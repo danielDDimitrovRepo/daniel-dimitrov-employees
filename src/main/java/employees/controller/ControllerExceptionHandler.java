@@ -1,6 +1,6 @@
 package employees.controller;
 
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,9 +9,10 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-@Slf4j
 @ControllerAdvice
 public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
+
+    private static final Logger log = org.slf4j.LoggerFactory.getLogger(ControllerExceptionHandler.class);
 
     @ExceptionHandler(value = {IllegalArgumentException.class})
     protected ResponseEntity<Object> handleConstraintViolationException(IllegalArgumentException ex, WebRequest request) {

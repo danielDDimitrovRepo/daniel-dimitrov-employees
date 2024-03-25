@@ -4,15 +4,9 @@ import com.opencsv.bean.CsvBindByName;
 import com.opencsv.bean.CsvCustomBindByName;
 import com.opencsv.bean.CsvDate;
 import com.opencsv.bean.processor.PreAssignmentProcessor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.time.LocalDate;
 
-@Setter
-@Getter
-@NoArgsConstructor
 public class JobHistory {
 
     @CsvBindByName(column = "EmpID")
@@ -30,4 +24,26 @@ public class JobHistory {
     @PreAssignmentProcessor(processor = TrimWhiteSpaceProcessor.class)
     private LocalDate to;
 
+    public JobHistory() {
+    }
+
+    public int getEmployeeId() {
+        return this.employeeId;
+    }
+
+    public int getProjectId() {
+        return this.projectId;
+    }
+
+    public LocalDate getFrom() {
+        return this.from;
+    }
+
+    public LocalDate getTo() {
+        return this.to;
+    }
+
+    public String toString() {
+        return "JobHistory(employeeId=" + this.getEmployeeId() + ", projectId=" + this.getProjectId() + ", from=" + this.getFrom() + ", to=" + this.getTo() + ")";
+    }
 }
