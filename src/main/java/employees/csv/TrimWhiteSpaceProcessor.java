@@ -6,7 +6,7 @@ public class TrimWhiteSpaceProcessor implements StringProcessor {
 
     @Override
     public String processString(String value) {
-        return value != null ? value.trim() : null;
+        return value.trim();
     }
 
     @Override

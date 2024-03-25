@@ -9,7 +9,7 @@ public class LocalDateConverter extends AbstractBeanField {
 
     @Override
     protected Object convert(String s) {
-        if (s == null || s.isEmpty() || s.equals("NULL")) {
+        if (s.isBlank() || s.equals("NULL")) {
             return LocalDate.now();
         }
 

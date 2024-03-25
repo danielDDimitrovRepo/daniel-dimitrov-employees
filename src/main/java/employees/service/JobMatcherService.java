@@ -5,18 +5,18 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 
 import static employees.constants.error.ErrorMessages.ERR_MSG_VALID_DATE_RANGE;
 
 @Service
 public class JobMatcherService {
 
-    public Optional<JobMatcherResult> matchLongestJobHistoryPair(List<JobHistory> jobHistory) {
+    public List<JobMatcherResult> matchJobHistoryPairs(List<JobHistory> jobHistory) {
 
-        JobMatcherResult.JobMatcherResultBuilder resultBuilder = new JobMatcherResult.JobMatcherResultBuilder();
-        long maxDaysOverlap = 0;
+        List<JobMatcherResult> result = new ArrayList<>();
 
         for (int i = 0; i < jobHistory.size(); i++) {
             for (int x = i + 1; x < jobHistory.size(); x++) {
@@ -30,19 +30,20 @@ public class JobMatcherService {
 
                 long daysOverlap = getDaysOverlap(left, right);
 
-                if (daysOverlap > maxDaysOverlap) {
-                    maxDaysOverlap = daysOverlap;
-                    resultBuilder
-                            .firstEmployee(left.getEmployeeId())
-                            .secondEmployee(right.getEmployeeId())
-                            .projectId(right.getProjectId())
-                            .daysWorkedTogether(maxDaysOverlap);
+                if (daysOverlap > 0) {
+                    result.add(new JobMatcherResult(
+                            left.getEmployeeId(),
+                            right.getEmployeeId(),
+                            right.getProjectId(),
+                            daysOverlap));
                 }
 
             }
         }
 
-        return maxDaysOverlap > 0 ? Optional.of(resultBuilder.build()) : Optional.empty();
+        result.sort(Comparator.comparingLong(JobMatcherResult::getDaysWorkedTogether).reversed());
+
+        return result;
     }
 
     private long getDaysOverlap(JobHistory left, JobHistory right) {
@@ -61,9 +62,9 @@ public class JobMatcherService {
         }
 
         LocalDate laterFrom = leftFrom.isAfter(rightFrom) ? leftFrom : rightFrom;
-        LocalDate earlierFrom = leftTo.isBefore(rightTo) ? leftTo : rightTo;
+        LocalDate earlierTo = leftTo.isBefore(rightTo) ? leftTo : rightTo;
 
-        return ChronoUnit.DAYS.between(laterFrom, earlierFrom);
+        return ChronoUnit.DAYS.between(laterFrom, earlierTo);
     }
 
 }

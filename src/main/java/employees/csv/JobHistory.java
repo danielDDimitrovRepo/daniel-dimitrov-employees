@@ -9,18 +9,18 @@ import java.time.LocalDate;
 
 public class JobHistory {
 
-    @CsvBindByName(column = "EmpID")
+    @CsvBindByName(column = "EmpID", required = true)
     private int employeeId;
 
-    @CsvBindByName(column = "ProjectID")
+    @CsvBindByName(column = "ProjectID", required = true)
     private int projectId;
 
     @CsvDate(value = "yyyy-MM-dd")
-    @CsvBindByName(column = "DateFrom")
+    @CsvBindByName(column = "DateFrom", required = true)
     @PreAssignmentProcessor(processor = TrimWhiteSpaceProcessor.class)
     private LocalDate from;
 
-    @CsvCustomBindByName(column = "DateTo", converter = LocalDateConverter.class)
+    @CsvCustomBindByName(column = "DateTo", required = true, converter = LocalDateConverter.class)
     @PreAssignmentProcessor(processor = TrimWhiteSpaceProcessor.class)
     private LocalDate to;
 

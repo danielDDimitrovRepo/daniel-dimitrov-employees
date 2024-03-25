@@ -1,5 +1,6 @@
 package employees.controller;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import employees.service.JobMatcherResult;
 import org.junit.jupiter.api.Test;
@@ -14,6 +15,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import java.nio.file.Files;
+import java.util.List;
 
 import static employees.constants.error.ErrorMessages.ERR_MSG_VALID_DATE_RANGE;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -51,18 +53,20 @@ class JobMatcherControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        JobMatcherResult result = objectMapper.readValue(mvcResult.getResponse().getContentAsByteArray(), JobMatcherResult.class);
-        JobMatcherResult expected = JobMatcherResult.builder()
-                .firstEmployee(218)
-                .secondEmployee(143)
-                .projectId(10)
-                .daysWorkedTogether(8).build();
+        TypeReference<List<JobMatcherResult>> listType = new TypeReference<>() {};
+        List<JobMatcherResult> result = objectMapper.readValue(mvcResult.getResponse().getContentAsByteArray(), listType);
 
-        assertThat(result).isEqualTo(expected);
+        List<JobMatcherResult> expected = List.of(
+                new JobMatcherResult(218, 143, 10, 8),
+                new JobMatcherResult(312, 213, 11, 7),
+                new JobMatcherResult(218, 111, 10, 6),
+                new JobMatcherResult(143, 111, 10, 6));
+
+        assertThat(result).containsExactlyElementsOf(expected);
     }
 
     @Test
-    void matchLongestJobHistoryPairFromFile_validCsvWithNoMatchingEmployees_returnsBadRequestWithMessage() throws Exception {
+    void matchLongestJobHistoryPairFromFile_validCsvWithNoMatchingEmployees_returnsNoContent() throws Exception {
 
         MockMultipartFile file
                 = new MockMultipartFile(

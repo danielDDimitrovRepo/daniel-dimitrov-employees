@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/job-history")
@@ -32,20 +31,20 @@ public class JobMatcherController {
     }
 
     @PostMapping(path = "/longest-pair")
-    public ResponseEntity<JobMatcherResult> matchLongestJobHistoryPairFromFile(@RequestParam("csv") MultipartFile file) {
+    public ResponseEntity<List<JobMatcherResult>> matchLongestJobHistoryPairFromFile(@RequestParam("csv") MultipartFile file) {
 
         List<JobHistory> jobHistory = csvParser.parseJobHistoryCsv(file);
         log.info("Processing CSV JobHistory entries: {}", jobHistory);
 
-        Optional<JobMatcherResult> result = jobMatcherService.matchLongestJobHistoryPair(jobHistory);
+        List<JobMatcherResult> result = jobMatcherService.matchJobHistoryPairs(jobHistory);
 
-        if (result.isPresent()) {
-            log.info("Match found: {}", result.get());
-            return ResponseEntity.ok(result.get());
+        if (result.isEmpty()) {
+            log.info("No match found");
+            return ResponseEntity.noContent().build();
         }
 
-        log.info("No match found");
-        return ResponseEntity.noContent().build();
+        log.info("Match found: {}", result);
+        return ResponseEntity.ok(result);
     }
 
 }
